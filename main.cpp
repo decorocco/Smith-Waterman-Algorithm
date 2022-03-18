@@ -6,7 +6,7 @@ struct item{
     int valor;
     int linha;
     int coluna;
-    string tipo;
+    int tipo; // diagonal = 1, deleção = 2, inserção = 3, zero = 4
 };
 
 
@@ -19,16 +19,20 @@ int main(){
     int insercao = 0;
 
     int maximo;
-    string tipo;
 
-    int vMax = 0;
-    int vMaxLinha;
-    int vMaxColuna;
+    item vMax;
+    vMax.valor = 0;
+    vMax.linha = 0;
+    vMax.coluna = 0;
+    vMax.tipo = 0;
 
     string sequencia;
 
     string a;
     string b;
+
+    string sequenciaA;
+    string sequenciaB;
 
     cin >> n >> m;
     cin >> a >> b;
@@ -62,46 +66,69 @@ int main(){
 
             if (diagonal >= delecao && diagonal >= insercao && diagonal >= 0){
                 maximo = diagonal;
-                H[i][j].tipo = "D";
+                H[i][j].tipo = 1;
             }
             else if (delecao >= diagonal && delecao >= insercao && delecao >= 0){
                 maximo = delecao;
-                H[i][j].tipo = "d";
+                H[i][j].tipo = 2;
             }
             else if (insercao >= diagonal && insercao >= delecao && insercao >= 0){
                 maximo = insercao;
-                H[i][j].tipo = "I";
+                H[i][j].tipo = 3;
             }
             else {
                 maximo = 0;
-                H[i][j].tipo = "Z";
+                H[i][j].tipo = 4;
             }
 
             H[i][j].valor = maximo;
-            H[i][j].tipo = tipo;
 
-            if (H[i][j].valor > vMax)
+            if (H[i][j].valor > vMax.valor)
             {
-                vMax = H[i][j].valor;
-                vMaxLinha = i;
-                vMaxColuna = j;
+                vMax.valor = H[i][j].valor;
+                vMax.linha = i;
+                vMax.coluna = j;
+                vMax.tipo = H[i][j].tipo;
             }
         }
     }
-
-    //sequencia = ;
-
-    //if (H[vMaxLinha][vMaxColuna].tipo == "D"){
-
-    //}
 
     for (int i = 0; i <= n; i++){
         for (int j = 0; j <= m; j++){
 
-            cout << H[i][j].valor << '-';
+            cout << H[i][j].valor << ' ';
         }
         cout << endl;
     }
+
+    cout << "SCORE:  " << vMax.valor << endl;
+
+    while (vMax.valor > 0 && vMax.linha > 0 && vMax.coluna > 0){
+        if (vMax.tipo == 1) {
+            sequenciaA += a[vMax.linha-1];
+            sequenciaB += b[vMax.coluna-1];
+            vMax.coluna--;
+            vMax.linha--;
+        }
+        else if (vMax.tipo == 2) {
+            sequenciaA += a[vMax.linha-1];
+            sequenciaB += '-';
+            vMax.linha--;
+        }
+        else if (vMax.tipo == 3) {
+            sequenciaA += '-';
+            sequenciaB += b[vMax.coluna-1];
+            vMax.coluna--;
+        }
+        vMax.valor = H[vMax.linha][vMax.coluna].valor;
+        vMax.tipo = H[vMax.linha][vMax.coluna].tipo;
+
+    }
+
+    reverse(sequenciaA.begin(), sequenciaA.end());
+    cout << "Sequencia A:  " << sequenciaA << endl;
+    reverse(sequenciaB.begin(), sequenciaB.end());
+    cout << "Sequencia b:  " << sequenciaB << endl;
 
     return 0;
 }
